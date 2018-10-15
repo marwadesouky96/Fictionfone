@@ -1,0 +1,27 @@
+version: '3'
+
+services: 
+  db:
+    image: mongo
+  # migration:
+  #   image: app
+  #   command: python3 manage.py migrate
+  #   #  volumes:
+  #   #   - .:/code
+  #   depends_on:
+  #     -db
+  web:
+    build: .
+    command: python3 manage.py runserver
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on: 
+      - db
+  proxy:
+    build: .
+    command: ssh -R zappy:80:localhost:8000 serveo.net
+    depends_on: 
+      - web
+    
